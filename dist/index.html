@@ -6,7 +6,17 @@
   <title>Document</title>
 </head>
 <body>
-  
-  <script src="/src.7ed060e2.js"></script>
+  <div id="app"></div>
+  <template id = "auction-template">
+      <section id="auction">
+          <h3>{ data.auction.product.name }</h3>
+          <p>Current bid: { data.auction.currentBid | money }</p>
+        
+          <aside rv-if="data.auction.timeLeft | lt 120">
+            Hurry up! There is { data.auction.timeLeft | time } left.
+          </aside>
+        </section>
+  </template>
+  <script src="./index.js"></script>
 </body>
 </html>

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel \"./public/index.html\"",
-    "build": "parcel build \"./public/index.html\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "parcel watch \"./src/index.js\" --global X",
+    "build": "parcel build \"./src/index.js\" --global X",
+    "test": "jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +14,11 @@
   "dependencies": {
     "@babel/preset-env": "^7.4.3",
     "axios": "^0.18.0",
-    "sizzle": "^2.3.4"
+    "sizzle": "^2.3.4",
+    "tinybind": "^0.11.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.3"
+    "@babel/core": "^7.4.3",
+    "jest": "^24.7.1"
   }
 }
