@@ -36,11 +36,11 @@ function define(tagName, template, data) {
     })
 }
 
-function bind(data) {
-    return tinybind.bind(this.element, data);
+function bindData(elem, data) {
+    return tinybind.bind(elem, data);
 }
 
 module.exports = {
     define,
-    bind
+    bindData
 };
