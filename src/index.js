@@ -2,10 +2,6 @@ require("babel-polyfill");
 const XElement = require("./XElement/index");
 const { bindData, define } = require("./TinybindElement/index");
 const {
-  onceElementsAppeared,
-  onceElementsDisappeared
-} = require("./DomObserver/index");
-const {
   find,
   matches,
   children,
@@ -15,7 +11,9 @@ const {
   parents,
   removeAttributesExcept,
   wrap,
-  wrapAll
+  wrapAll,
+  dispatchCustomEvent,
+  watch
 } = require("./DomHelper/index");
 
 [
@@ -31,7 +29,9 @@ const {
   parents,
   removeAttributesExcept,
   wrap,
-  wrapAll
+  wrapAll,
+  dispatchCustomEvent,
+  watch
 ].forEach(function(fn) {
   XElement.prototype[fn.name] = function() {
     return fn(this.element, ...arguments);

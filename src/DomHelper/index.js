@@ -1,26 +1,26 @@
 const Sizzle = require("sizzle");
 
+const { throttle } = require("../Helpers/index");
+
 const find = function(elem, selector) {
   return Sizzle(selector, elem);
-};
-
-const children = function(elem, selector) {
-  if (selector) {
-    return Sizzle(selector, elem);
-  } else {
-    return elem.children;
-  }
 };
 
 const matches = function(elem, selector) {
   return Sizzle.matchSelector(elem, selector);
 };
 
+const children = function(elem, selector) {
+  if (selector) {
+    return find(selector, elem);
+  } else {
+    return elem.children;
+  }
+};
+
 const siblings = function(elem, selector) {
   return Array.from(elem.parentNode.children).filter(function(child) {
-    return (
-      child !== elem && (!selector || Sizzle.matchSelector(child, selector))
-    );
+    return child !== elem && (!selector || matches(child, selector));
   });
 };
 
@@ -28,7 +28,7 @@ const prevAll = function(elem, selector) {
   let sibs = [];
   while ((elem = elem.previousSibling)) {
     if (elem.nodeType === 3) continue;
-    if (!selector || Sizzle.matchSelector(elem, selector)) sibs.push(elem);
+    if (!selector || matches(elem, selector)) sibs.push(elem);
   }
   return sibs;
 };
@@ -40,7 +40,7 @@ const nextAll = function(elem, selector) {
     if (nextElem.nodeType === 3) continue;
     if (nextElem === elem) continue;
     if (nextElem === elem.nextElementSibling) {
-      if (!selector || Sizzle.matchSelector(nextElem, selector)) {
+      if (!selector || matches(nextElem, selector)) {
         sibs.push(nextElem);
         elem = nextElem;
       }
@@ -54,7 +54,7 @@ const parents = function(elem, selector) {
   el = elem.parentElement;
   while (el) {
     if (selector) {
-      if (Sizzle.matchSelector(el, selector)) {
+      if (matches(el, selector)) {
         parents.push(el);
       }
     } else {
@@ -121,6 +121,47 @@ const wrapAll = function(elem, selector, wrapper) {
   }
 };
 
+const dispatchCustomEvent = function(elem, eventName, detail) {
+  var event = new CustomEvent(eventName, { detail: detail });
+  elem.dispatchEvent(event);
+};
+
+const watch = function(
+  elem,
+  selector,
+  callback = function(...args) {
+    console.log(args);
+  },
+  interval = 200,
+  times = Number.MAX_SAFE_INTEGER
+) {
+  var oldOuterHTML = elem.outerHTML;
+  elem.addEventListener("domChanged", throttle(onDomChanged, interval));
+  const observer = new MutationObserver(function(mutationList, observer) {
+    console.log(mutationList);
+    dispatchCustomEvent(elem, "domChanged", { observer });
+  });
+  observer.observe(elem, {
+    childList: true,
+    attributes: true,
+    characterData: true,
+    subtree: true
+  });
+  function onDomChanged(e) {
+    observer = e.detail.obsever;
+    const relatedElements = find(elem, selector);
+    if (relatedElements.length > 0) {
+      times -= 1;
+      if (times == 0) {
+        observer.disconnect();
+        observer = null;
+      }
+      callback(relatedElements, oldOuterHTML);
+      oldOuterHTML = elem.outerHTML;
+    }
+  }
+};
+
 module.exports = {
   find,
   matches,
@@ -131,5 +172,7 @@ module.exports = {
   parents,
   removeAttributesExcept,
   wrap,
-  wrapAll
+  wrapAll,
+  dispatchCustomEvent,
+  watch
 };
