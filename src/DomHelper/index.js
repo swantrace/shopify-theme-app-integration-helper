@@ -1,6 +1,6 @@
 const Sizzle = require("sizzle");
 
-const { throttle } = require("../Helpers/index");
+const { throttle, fragmentFromString } = require("../Helpers/index");
 
 const find = function(elem, selector) {
   return Sizzle(selector, elem);
@@ -80,7 +80,7 @@ const removeAttributesExcept = function(elem, attributeNames = []) {
 };
 
 const wrap = function(elem, selector, wrapper) {
-  var elms = Sizzle(selector, elem);
+  var elms = find(selector, elem);
   if (!elms.length) {
     elms = [elms];
   }
@@ -103,7 +103,7 @@ const wrap = function(elem, selector, wrapper) {
 };
 
 const wrapAll = function(elem, selector, wrapper) {
-  var elms = Sizzle(selector, elem);
+  var elms = find(selector, elem);
   var el = elms.length ? elms[0] : elms,
     parent = el.parentNode,
     sibling = el.nextSibling;
@@ -137,9 +137,8 @@ const watch = function(
 ) {
   var oldOuterHTML = elem.outerHTML;
   elem.addEventListener("domChanged", throttle(onDomChanged, interval));
-  const observer = new MutationObserver(function(mutationList, observer) {
-    console.log(mutationList);
-    dispatchCustomEvent(elem, "domChanged", { observer });
+  const observer = new MutationObserver(function() {
+    dispatchCustomEvent(elem, "domChanged");
   });
   observer.observe(elem, {
     childList: true,
@@ -147,8 +146,8 @@ const watch = function(
     characterData: true,
     subtree: true
   });
+  dispatchCustomEvent(elem, "domChanged");
   function onDomChanged(e) {
-    observer = e.detail.obsever;
     const relatedElements = find(elem, selector);
     if (relatedElements.length > 0) {
       times -= 1;
