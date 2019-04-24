@@ -18,8 +18,6 @@ const {
 
 [
   bindData,
-  onceElementsAppeared,
-  onceElementsDisappeared,
   find,
   matches,
   children,
