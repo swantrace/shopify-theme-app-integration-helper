@@ -1,4 +1,3 @@
-require("babel-polyfill");
 const XElement = require("./XElement/index");
 const { bindData, define } = require("./TinybindElement/index");
 const {
@@ -16,24 +15,55 @@ const {
   watch
 } = require("./DomHelper/index");
 
-[
-  bindData,
-  find,
-  matches,
-  children,
-  siblings,
-  prevAll,
-  nextAll,
-  parents,
-  removeAttributesExcept,
-  wrap,
-  wrapAll,
-  dispatchCustomEvent,
-  watch
-].forEach(function(fn) {
-  XElement.prototype[fn.name] = function() {
+const {
+  onceAttributeAdded,
+  onceNodeAdded,
+  onceTextAdded,
+  onceAttributeRemoved,
+  onceNodeRemoved,
+  onceTextRemoved,
+  onAttributeAdded,
+  onAttributeRemoved,
+  onNodeAdded,
+  onNodeRemoved,
+  onTextAdded,
+  onTextRemoved
+} = require("./DOMObserver/index");
+
+const addFunctionToXElement = function(fn, fnName) {
+  XElement.prototype[fnName] = function() {
     return fn(this.element, ...arguments);
   };
+};
+
+[
+  [onceAttributeAdded, "onceAttributeAdded"],
+  [onceNodeAdded, "onceNodeAdded"],
+  [onceTextAdded, "onceTextAdded"],
+  [onceAttributeRemoved, "onceAttributeRemoved"],
+  [onceNodeRemoved, "onceNodeRemoved"],
+  [onceTextRemoved, "onceTextRemoved"],
+  [onAttributeAdded, "onAttributeAdded"],
+  [onAttributeRemoved, "onAttributeRemoved"],
+  [onNodeAdded, "onNodeAdded"],
+  [onNodeRemoved, "onNodeRemoved"],
+  [onTextAdded, "onTextAdded"],
+  [onTextRemoved, "onTextRemoved"],
+  [bindData, "bindData"],
+  [find, "find"],
+  [matches, "matches"],
+  [removeAttributesExcept, "removeAttributesExcept"],
+  [children, "children"],
+  [siblings, "siblings"],
+  [prevAll, "prevAll"],
+  [nextAll, "nextAll"],
+  [parents, "parents"],
+  [wrap, "wrap"],
+  [wrapAll, "wrapAll"],
+  [dispatchCustomEvent, "dispatchCustomEvent"],
+  [watch, "watch"]
+].forEach(function([fn, fnName]) {
+  addFunctionToXElement(fn, fnName);
 });
 
 let X = (function() {

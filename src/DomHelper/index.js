@@ -7,7 +7,7 @@ const find = function(elem, selector) {
 };
 
 const matches = function(elem, selector) {
-  return Sizzle.matchSelector(elem, selector);
+  return Sizzle.matchesSelector(elem, selector);
 };
 
 const children = function(elem, selector) {
