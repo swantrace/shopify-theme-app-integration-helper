@@ -1,4 +1,3 @@
-// const Sizzle = require("sizzle");
 import Sizzle from "sizzle";
 
 export default {

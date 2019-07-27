@@ -1,5 +1,5 @@
-const tinybind = require("tinybind");
-const { formatMoney } = require("../Helpers/ShopifyGeneralHelpers");
+import tinybind from "tinybind";
+import { formatMoney } from "../Helpers/ShopifyGeneralHelpers";
 
 tinybind.formatters["="] = (value, arg) => value == arg;
 
