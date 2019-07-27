@@ -24,4 +24,4 @@ XElement.prototype.init = function() {
   }
 };
 
-module.exports = XElement;
+export default XElement;

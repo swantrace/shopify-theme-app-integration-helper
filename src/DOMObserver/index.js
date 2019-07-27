@@ -1,4 +1,4 @@
-const { find, matches } = require("../DomHelper");
+import { find, matches } from "../Helpers/DomHelpers";
 const NODE = 1;
 const ATTRIBUTE = 2;
 const CHARACTERDATA = 3;
@@ -203,7 +203,7 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
     return acc;
   }
 
-  function _removeChracterDataReducer(acc, cur, idx, src) {
+  function _removeChracterDataReducer(acc, cur) {
     const { target, oldValue } = cur;
     const currentValue = target.textContent;
     if (searchTerm.test(oldValue) && !searchTerm.test(currentValue)) {
@@ -293,7 +293,7 @@ const onAttributeAdded = onFunctionTemplate(onceAttributeAdded);
 const onceAttributeRemoved = onceFunctionTemplate(_observeAttribute, REMOVE);
 const onAttributeRemoved = onFunctionTemplate(onceAttributeRemoved);
 
-module.exports = {
+export default {
   onceTextAdded,
   onceAttributeAdded,
   onceNodeAdded,

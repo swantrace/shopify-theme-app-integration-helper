@@ -1,6 +1,20 @@
-const XElement = require("./XElement/index");
-const { bindData, define } = require("./TinybindElement/index");
-const {
+import XElement from "./XElement";
+import { bindData, define } from "./TinybindElement";
+import {
+  range,
+  sendRequestsInParallel,
+  sendRequestsInSeries,
+  formatMoney,
+  addcss,
+  hideCheckoutButtons,
+  showCheckoutButtonsHiddenByUs,
+  quantityInputValuesInAgreementWithCartObject,
+  toggleCheckout,
+  toggleFocusInFocusOutEventListenersOfElement
+} from "./Helpers/ShopifyGeneralHelpers";
+import ProductOptions from "./Bold/ProductOptions";
+import QuantityBreaks from "./Bold/QuantityBreaks";
+import {
   find,
   matches,
   children,
@@ -11,11 +25,10 @@ const {
   removeAttributesExcept,
   wrap,
   wrapAll,
-  dispatchCustomEvent,
-  watch
-} = require("./DomHelper/index");
+  dispatchCustomEvent
+} from "./Helpers/DomHelpers";
 
-const {
+import {
   onceAttributeAdded,
   onceNodeAdded,
   onceTextAdded,
@@ -28,7 +41,20 @@ const {
   onNodeRemoved,
   onTextAdded,
   onTextRemoved
-} = require("./DOMObserver/index");
+} from "./DOMObserver";
+
+import {
+  getCart,
+  getProduct,
+  clearCart,
+  updateCartFromForm,
+  changeItemByKey,
+  removeItemByKey,
+  changeItemByLine,
+  removeItemByLine,
+  addItem,
+  addItemFromForm
+} from "./ShopifyAPI";
 
 const addFunctionToXElement = function(fn, fnName) {
   XElement.prototype[fnName] = function() {
@@ -61,7 +87,10 @@ const addFunctionToXElement = function(fn, fnName) {
   [wrap, "wrap"],
   [wrapAll, "wrapAll"],
   [dispatchCustomEvent, "dispatchCustomEvent"],
-  [watch, "watch"]
+  [
+    toggleFocusInFocusOutEventListenersOfElement,
+    "toggleFocusInFocusOutEventListenersOfElement"
+  ]
 ].forEach(function([fn, fnName]) {
   addFunctionToXElement(fn, fnName);
 });
@@ -80,9 +109,28 @@ let X = (function() {
 
 X = Object.assign(X, {
   define,
-  find: function(selector) {
-    return X(document.documentElement).find(selector);
-  }
+  find,
+  range,
+  addcss,
+  sendRequestsInParallel,
+  sendRequestsInSeries,
+  formatMoney,
+  po: ProductOptions,
+  qb: QuantityBreaks,
+  getCart,
+  getProduct,
+  clearCart,
+  updateCartFromForm,
+  changeItemByKey,
+  removeItemByKey,
+  changeItemByLine,
+  removeItemByLine,
+  addItem,
+  addItemFromForm,
+  hideCheckoutButtons,
+  showCheckoutButtonsHiddenByUs,
+  quantityInputValuesInAgreementWithCartObject,
+  toggleCheckout
 });
 
 module.exports = X;

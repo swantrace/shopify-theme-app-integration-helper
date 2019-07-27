@@ -1,36 +1,30 @@
 const tinybind = require("tinybind");
+const { formatMoney } = require("../Helpers/ShopifyGeneralHelpers");
 
-tinybind.configure({
-  binders: {
-    "prop-*": function(el, value) {
-      console.log(this.arg, value);
-      el[this.arg] = value;
-    }
-  }
-});
+tinybind.formatters["="] = (value, arg) => value == arg;
 
-class TinybindElement extends HTMLElement {
-  connectedCallback() {
-    const template = this.constructor.template;
-    const templateEl = document.createElement("template");
-    templateEl.innerHTML = template;
-    const clonedTemplate = templateEl.content.cloneNode(true);
-    this.__tinybindView = tinybind.bind(clonedTemplate, this);
-    this.appendChild(clonedTemplate);
-  }
+tinybind.formatters[">"] = (value, arg) => value > arg;
 
-  disconnectedCallback() {
-    this.__tinybindView.unbind();
-  }
-}
+tinybind.formatters[">="] = (value, arg) => value >= arg;
 
-function define(tagName, template, data) {
+tinybind.formatters["<"] = (value, arg) => value < arg;
+
+tinybind.formatters["<="] = (value, arg) => value <= arg;
+
+tinybind.formatters.money = (value, format = "${{amount}}") =>
+  formatMoney(value, format);
+
+tinybind.formatters["+"] = (value, arg) => value + arg;
+tinybind.formatters["-"] = (value, arg) => value - arg;
+tinybind.formatters["*"] = (value, arg) => value * arg;
+tinybind.formatters["/"] = (value, arg) => value / arg;
+
+function define(tagName, template, properties) {
   customElements.define(
     tagName,
-    class extends TinybindElement {
-      constructor() {
-        super();
-        this.data = data;
+    class extends tinybind.Component {
+      static get properties() {
+        return properties;
       }
       static get template() {
         return template;
@@ -43,7 +37,7 @@ function bindData(elem, data) {
   return tinybind.bind(elem, data);
 }
 
-module.exports = {
+export default {
   define,
   bindData
 };
