@@ -1,5 +1,7 @@
 import XElement from "./XElement";
+
 import { bindData, define } from "./TinybindElement";
+
 import {
   range,
   sendRequestsInParallel,
@@ -12,8 +14,20 @@ import {
   toggleCheckout,
   toggleFocusInFocusOutEventListenersOfElement
 } from "./Helpers/ShopifyGeneralHelpers";
+
 import ProductOptions from "./Bold/ProductOptions";
 import QuantityBreaks from "./Bold/QuantityBreaks";
+import CustomPricing from "./Bold/CustomPricing";
+import Memberships from "./Bold/Memberships";
+import Multicurrency from "./Bold/Multicurrency";
+import ProductBuilder from "./Bold/ProductBuilder";
+import ProductBundles from "./Bold/ProductBundles";
+import ProductDiscount from "./Bold/ProductDiscount";
+import ProductUpsell from "./Bold/ProductUpsell";
+import RecurringOrders from "./Bold/RecurringOrders";
+import SalesMotivator from "./Bold/SalesMotivator";
+import StoreLocator from "./Bold/StoreLocator";
+
 import {
   find,
   matches,
@@ -117,6 +131,16 @@ X = Object.assign(X, {
   formatMoney,
   po: ProductOptions,
   qb: QuantityBreaks,
+  csp: CustomPricing,
+  mem: Memberships,
+  mc: Multicurrency,
+  builder: ProductBuilder,
+  bundles: ProductBundles,
+  pd: ProductDiscount,
+  pu: ProductUpsell,
+  ro: RecurringOrders,
+  tm: SalesMotivator,
+  locator: StoreLocator,
   getCart,
   getProduct,
   clearCart,
