@@ -1,20 +1,9 @@
 import XElement from "./XElement";
-
-import { bindData, define } from "./TinybindElement";
-
-import {
-  range,
-  sendRequestsInParallel,
-  sendRequestsInSeries,
-  formatMoney,
-  addcss,
-  hideCheckoutButtons,
-  showCheckoutButtonsHiddenByUs,
-  quantityInputValuesInAgreementWithCartObject,
-  toggleCheckout,
-  toggleFocusInFocusOutEventListenersOfElement
-} from "./Helpers/ShopifyGeneralHelpers";
-
+import TinybindElement from "./TinybindElement";
+import ShopifyGeneralHelpers from "./Helpers/ShopifyGeneralHelpers";
+import ShopifyAPI from "./ShopifyAPI";
+import DomHelpers from "./Helpers/DomHelpers";
+import DomObserver from "./DOMObserver";
 import ProductOptions from "./Bold/ProductOptions";
 import QuantityBreaks from "./Bold/QuantityBreaks";
 import CustomPricing from "./Bold/CustomPricing";
@@ -28,21 +17,7 @@ import RecurringOrders from "./Bold/RecurringOrders";
 import SalesMotivator from "./Bold/SalesMotivator";
 import StoreLocator from "./Bold/StoreLocator";
 
-import {
-  find,
-  matches,
-  children,
-  siblings,
-  prevAll,
-  nextAll,
-  parents,
-  removeAttributesExcept,
-  wrap,
-  wrapAll,
-  dispatchCustomEvent
-} from "./Helpers/DomHelpers";
-
-import {
+const {
   onceAttributeAdded,
   onceNodeAdded,
   onceTextAdded,
@@ -55,9 +30,8 @@ import {
   onNodeRemoved,
   onTextAdded,
   onTextRemoved
-} from "./DOMObserver";
-
-import {
+} = DomObserver;
+const {
   getCart,
   getProduct,
   clearCart,
@@ -68,7 +42,36 @@ import {
   removeItemByLine,
   addItem,
   addItemFromForm
-} from "./ShopifyAPI";
+} = ShopifyAPI;
+const { bindData, define } = TinybindElement;
+const {
+  range,
+  sendRequestsInParallel,
+  sendRequestsInSeries,
+  formatMoney,
+  addcss,
+  hideCheckoutButtons,
+  showCheckoutButtonsHiddenByUs,
+  quantityInputValuesInAgreementWithCartObject,
+  toggleCheckout,
+  toggleFocusInFocusOutEventListenersOfElement
+} = ShopifyGeneralHelpers;
+const {
+  find,
+  empty,
+  remove,
+  removeClass,
+  matches,
+  children,
+  siblings,
+  prevAll,
+  nextAll,
+  parents,
+  removeAttributesExcept,
+  wrap,
+  wrapAll,
+  dispatchCustomEvent
+} = DomHelpers;
 
 const addFunctionToXElement = function(fn, fnName) {
   XElement.prototype[fnName] = function() {
@@ -92,6 +95,9 @@ const addFunctionToXElement = function(fn, fnName) {
   [bindData, "bindData"],
   [find, "find"],
   [matches, "matches"],
+  [empty, "empty"],
+  [remove, "remove"],
+  [removeClass, "removeClass"],
   [removeAttributesExcept, "removeAttributesExcept"],
   [children, "children"],
   [siblings, "siblings"],

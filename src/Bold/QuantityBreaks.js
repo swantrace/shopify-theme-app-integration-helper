@@ -1,4 +1,5 @@
-import { getCart } from "../ShopifyAPI";
+import ShopifyAPI from "../ShopifyAPI";
+const { getCart } = ShopifyAPI;
 
 export default {
   qbHandleCart(cart) {

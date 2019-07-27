@@ -1,4 +1,5 @@
-import { find, matches } from "../Helpers/DomHelpers";
+import DomHelpers from "../Helpers/DomHelpers";
+const { find, matches } = DomHelpers;
 const NODE = 1;
 const ATTRIBUTE = 2;
 const CHARACTERDATA = 3;

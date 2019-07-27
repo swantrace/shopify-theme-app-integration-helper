@@ -1,5 +1,6 @@
 import tinybind from "tinybind";
-import { formatMoney } from "../Helpers/ShopifyGeneralHelpers";
+import ShopifyGeneralHelpers from "../Helpers/ShopifyGeneralHelpers";
+const { formatMoney } = ShopifyGeneralHelpers;
 
 tinybind.formatters["="] = (value, arg) => value == arg;
 
