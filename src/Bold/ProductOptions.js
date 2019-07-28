@@ -1,10 +1,8 @@
 /* eslint-disable no-console */
 import axios from "axios";
-import ShopifyGeneralHelpers from "../Helpers/ShopifyGeneralHelpers";
-import DomHelpers from "../Helpers/DomHelpers";
-
-const { range, fragmentFromString, isValidATCForm } = ShopifyGeneralHelpers;
-const { empty, remove, removeClass } = DomHelpers;
+import { range, isValidATCForm } from "../Helpers/ShopifyGeneralHelpers";
+import { empty, remove, removeClass } from "../Helpers/DomHelpers";
+import { createFragmentFromString } from "../Helpers/Utilities";
 
 export default {
   getOptionsByProductId(productId, shopifyURL) {
@@ -69,7 +67,7 @@ export default {
         moveIfExist && form.insertBefore(optionWidgets[0], referenceNode);
       } else {
         form.insertBefore(
-          fragmentFromString(
+          createFragmentFromString(
             `<div class="bold_options" data-product-id="${productId}"></div>`
           ),
           referenceNode

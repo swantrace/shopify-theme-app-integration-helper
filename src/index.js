@@ -1,23 +1,70 @@
 import XElement from "./XElement";
-import TinybindElement from "./TinybindElement";
-import ShopifyGeneralHelpers from "./Helpers/ShopifyGeneralHelpers";
-import ShopifyAPI from "./ShopifyAPI";
-import DomHelpers from "./Helpers/DomHelpers";
-import DomObserver from "./DOMObserver";
-import ProductOptions from "./Bold/ProductOptions";
-import QuantityBreaks from "./Bold/QuantityBreaks";
-import CustomPricing from "./Bold/CustomPricing";
-import Memberships from "./Bold/Memberships";
-import Multicurrency from "./Bold/Multicurrency";
-import ProductBuilder from "./Bold/ProductBuilder";
-import ProductBundles from "./Bold/ProductBundles";
-import ProductDiscount from "./Bold/ProductDiscount";
-import ProductUpsell from "./Bold/ProductUpsell";
-import RecurringOrders from "./Bold/RecurringOrders";
-import SalesMotivator from "./Bold/SalesMotivator";
-import StoreLocator from "./Bold/StoreLocator";
-
-const {
+import { bindData, define } from "./TinybindElement";
+import {
+  isHTML,
+  isCSSSelector,
+  isRegularExpression,
+  isAttributeMap,
+  isNode,
+  range,
+  sendRequestsInParallel,
+  sendRequestsInSeries,
+  throwIfMissing,
+  createFragmentFromString,
+  throttle,
+  merge
+} from "./Helpers/Utilities";
+import {
+  formatMoney,
+  toggleCheckout,
+  isValidATCForm,
+  hideCheckoutButtons,
+  showCheckoutButtonsHiddenByUs,
+  quantityInputValuesInAgreementWithCartObject,
+  toggleFocusInFocusOutEventListenersOfElement,
+  addCSS,
+  addJS
+} from "./Helpers/ShopifyGeneralHelpers";
+import {
+  find,
+  empty,
+  after,
+  before,
+  appendTo,
+  prependTo,
+  remove,
+  removeClass,
+  addClass,
+  hasClass,
+  toggleClass,
+  replaceClass,
+  matches,
+  children,
+  siblings,
+  prevAll,
+  nextAll,
+  parents,
+  removeAttributesExcept,
+  wrapEachChildWith,
+  wrapAllChildrenWith,
+  unwrapEachChild,
+  replaceWith,
+  dispatchCustomEvent,
+  show,
+  hide,
+  toggle,
+  fadeIn,
+  fadeOut,
+  fadeToggle,
+  slideDown,
+  slideUp,
+  slideToggle,
+  animate,
+  css,
+  attr,
+  data
+} from "./Helpers/DomHelpers";
+import {
   onceAttributeAdded,
   onceNodeAdded,
   onceTextAdded,
@@ -30,48 +77,20 @@ const {
   onNodeRemoved,
   onTextAdded,
   onTextRemoved
-} = DomObserver;
-const {
-  getCart,
-  getProduct,
-  clearCart,
-  updateCartFromForm,
-  changeItemByKey,
-  removeItemByKey,
-  changeItemByLine,
-  removeItemByLine,
-  addItem,
-  addItemFromForm
-} = ShopifyAPI;
-const { bindData, define } = TinybindElement;
-const {
-  range,
-  sendRequestsInParallel,
-  sendRequestsInSeries,
-  formatMoney,
-  addcss,
-  hideCheckoutButtons,
-  showCheckoutButtonsHiddenByUs,
-  quantityInputValuesInAgreementWithCartObject,
-  toggleCheckout,
-  toggleFocusInFocusOutEventListenersOfElement
-} = ShopifyGeneralHelpers;
-const {
-  find,
-  empty,
-  remove,
-  removeClass,
-  matches,
-  children,
-  siblings,
-  prevAll,
-  nextAll,
-  parents,
-  removeAttributesExcept,
-  wrap,
-  wrapAll,
-  dispatchCustomEvent
-} = DomHelpers;
+} from "./DOMObserver";
+import ShopifyAPI from "./ShopifyAPI";
+import ProductOptions from "./Bold/ProductOptions";
+import QuantityBreaks from "./Bold/QuantityBreaks";
+import CustomPricing from "./Bold/CustomPricing";
+import Memberships from "./Bold/Memberships";
+import Multicurrency from "./Bold/Multicurrency";
+import ProductBuilder from "./Bold/ProductBuilder";
+import ProductBundles from "./Bold/ProductBundles";
+import ProductDiscount from "./Bold/ProductDiscount";
+import ProductUpsell from "./Bold/ProductUpsell";
+import RecurringOrders from "./Bold/RecurringOrders";
+import SalesMotivator from "./Bold/SalesMotivator";
+import StoreLocator from "./Bold/StoreLocator";
 
 const addFunctionToXElement = function(fn, fnName) {
   XElement.prototype[fnName] = function() {
@@ -104,8 +123,8 @@ const addFunctionToXElement = function(fn, fnName) {
   [prevAll, "prevAll"],
   [nextAll, "nextAll"],
   [parents, "parents"],
-  [wrap, "wrap"],
-  [wrapAll, "wrapAll"],
+  [wrapEachChildWith, "wrapEachChildWith"],
+  [wrapAllChildrenWith, "wrapAllChildrenWith"],
   [dispatchCustomEvent, "dispatchCustomEvent"],
   [
     toggleFocusInFocusOutEventListenersOfElement,
@@ -131,10 +150,11 @@ X = Object.assign(X, {
   define,
   find,
   range,
-  addcss,
+  addCSS,
   sendRequestsInParallel,
   sendRequestsInSeries,
   formatMoney,
+  api: ShopifyAPI,
   po: ProductOptions,
   qb: QuantityBreaks,
   csp: CustomPricing,
@@ -147,16 +167,6 @@ X = Object.assign(X, {
   ro: RecurringOrders,
   tm: SalesMotivator,
   locator: StoreLocator,
-  getCart,
-  getProduct,
-  clearCart,
-  updateCartFromForm,
-  changeItemByKey,
-  removeItemByKey,
-  changeItemByLine,
-  removeItemByLine,
-  addItem,
-  addItemFromForm,
   hideCheckoutButtons,
   showCheckoutButtonsHiddenByUs,
   quantityInputValuesInAgreementWithCartObject,

@@ -38,7 +38,4 @@ function bindData(elem, data) {
   return tinybind.bind(elem, data);
 }
 
-export default {
-  define,
-  bindData
-};
+export { define, bindData };

@@ -1,5 +1,9 @@
-import DomHelpers from "../Helpers/DomHelpers";
-const { find, matches } = DomHelpers;
+import { find, matches } from "../Helpers/DomHelpers";
+import {
+  isCSSSelector,
+  isRegularExpression,
+  isAttributeMap
+} from "../Helpers/Utilities";
 const NODE = 1;
 const ATTRIBUTE = 2;
 const CHARACTERDATA = 3;
@@ -9,13 +13,13 @@ const REMOVE = -1;
 const _observeDom = function(elem, type, searchTerm, addOrRemove) {
   return new Promise((resolve, reject) => {
     if (
-      !_isCSSSelector(searchTerm) &&
-      !_isRegularExpression(searchTerm) &&
-      !_isAttributeMap(searchTerm)
+      !isCSSSelector(searchTerm) &&
+      !isRegularExpression(searchTerm) &&
+      !isAttributeMap(searchTerm)
     ) {
       reject(
         new Error(
-          "SearchTerm is not valid CSS selector, Regular Expression or Map"
+          "SearchTerm is not valid CSS selector, Regular Expression or Attribute Map"
         )
       );
     }
@@ -27,15 +31,15 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
     };
 
     if (type === ATTRIBUTE) {
-      if (_isAttributeMap(searchTerm)) {
+      if (isAttributeMap(searchTerm)) {
         config.attributeFilter = Array.from(searchTerm.keys());
       } else {
-        reject(new Error("You can only use Map to observe attribute chanage"));
+        reject(new Error("You can only use Map to observe attribute change"));
       }
     }
 
     if (type === CHARACTERDATA) {
-      if (!_isRegularExpression(searchTerm)) {
+      if (!isRegularExpression(searchTerm)) {
         reject(
           new Error(
             "You can only use regular expression to observe characterdata change"
@@ -108,7 +112,7 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
   function _addNodeReducer(acc, cur) {
     const { addedNodes } = cur;
     addedNodes.forEach(addedNode => {
-      if (_isCSSSelector(searchTerm)) {
+      if (isCSSSelector(searchTerm)) {
         if (addedNode.nodeType === 1) {
           if (
             find(addedNode, searchTerm) &&
@@ -132,7 +136,7 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
           }
         }
       }
-      if (_isRegularExpression(searchTerm)) {
+      if (isRegularExpression(searchTerm)) {
         if (addedNode.nodeType === 3) {
           if (searchTerm.test(addedNode.textContent)) {
             acc.push(addedNode.parentNode);
@@ -169,7 +173,7 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
   function _removeNodeReducer(acc, cur) {
     const { removedNodes, target } = cur;
     removedNodes.forEach(removedNode => {
-      if (_isCSSSelector(searchTerm)) {
+      if (isCSSSelector(searchTerm)) {
         if (removedNode.nodeType === 1) {
           if (
             find(removedNode, searchTerm) ||
@@ -179,7 +183,7 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
           }
         }
       }
-      if (_isRegularExpression(searchTerm)) {
+      if (isRegularExpression(searchTerm)) {
         if (removedNode.nodeType === 3) {
           if (searchTerm.test(removedNode.textContent)) {
             acc.push(target);
@@ -213,30 +217,6 @@ const _observeDom = function(elem, type, searchTerm, addOrRemove) {
     return acc;
   }
 };
-
-function _isCSSSelector(term) {
-  if (typeof term !== "string") {
-    return false;
-  }
-  try {
-    document.querySelector(term);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-function _isRegularExpression(term) {
-  return term instanceof RegExp;
-}
-
-function _isAttributeMap(term) {
-  return (
-    term instanceof Map &&
-    Array.from(term.keys()).every(n => typeof n === "string") &&
-    Array.from(term.values()).every(n => typeof n === "string")
-  );
-}
 
 async function _observeNode(elem, term, addOrRemove) {
   const nodes = await _observeDom(elem, 1, term, addOrRemove);
@@ -294,7 +274,7 @@ const onAttributeAdded = onFunctionTemplate(onceAttributeAdded);
 const onceAttributeRemoved = onceFunctionTemplate(_observeAttribute, REMOVE);
 const onAttributeRemoved = onFunctionTemplate(onceAttributeRemoved);
 
-export default {
+export {
   onceTextAdded,
   onceAttributeAdded,
   onceNodeAdded,
