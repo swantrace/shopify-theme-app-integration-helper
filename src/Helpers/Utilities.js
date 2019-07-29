@@ -1,5 +1,6 @@
 import axios from "axios";
-import { Promise } from "bluebird";
+import map from "promise-map";
+import mapSeries from "promise-map-series";
 const htmlTags = [
   "a",
   "abbr",
@@ -364,7 +365,7 @@ function sendRequestsInParallel(
   limit = Infinity,
   callback = a => a
 ) {
-  return Promise.map(
+  return map(
     requestObjects,
     ({ url, method, data }) => {
       if (method === "get") {
@@ -379,7 +380,7 @@ function sendRequestsInParallel(
 }
 
 function sendRequestsInSeries(requestObjects, callback = a => a) {
-  return Promise.mapSeries(requestObjects, ({ url, method, data }) => {
+  return mapSeries(requestObjects, ({ url, method, data }) => {
     if (method === "get") {
       return axios.get(url).then(callback);
     }
@@ -417,6 +418,7 @@ function throttle(fn, interval) {
     }, interval || 500);
   };
 }
+
 function merge(...arrs) {
   return Array.from(new Set([].concat(...arrs)));
 }
