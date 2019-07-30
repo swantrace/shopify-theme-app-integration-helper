@@ -198,6 +198,132 @@ function addCSS(text) {}
 
 function addJS(text) {}
 
+function boldFixCart(cart) {
+  if (cart && cart.token) {
+    if (
+      window.BOLD &&
+      window.BOLD.common &&
+      window.BOLD.common.cartDoctor &&
+      typeof window.BOLD.common.cartDoctor.fix === "function"
+    ) {
+      cart = window.BOLD.common.cartDoctor.fix(cart);
+    }
+    return cart;
+  }
+  return cart;
+}
+
+function boldFixItem(item) {
+  if (item && item.key) {
+    if (
+      window.BOLD &&
+      window.BOLD.common &&
+      window.BOLD.common.cartDoctor &&
+      typeof window.BOLD.common.cartDoctor.fixItem === "function"
+    ) {
+      item = window.BOLD.common.cartDoctor.fixItem(item);
+    }
+    return item;
+  }
+  return item;
+}
+
+function boldEmitCartLoaded() {
+  if (
+    window.BOLD &&
+    window.BOLD.common &&
+    window.BOLD.common.eventEmitter &&
+    typeof window.BOLD.common.eventEmitter.emit === "function"
+  ) {
+    window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded");
+  }
+}
+
+function boldBlockScripts(list) {
+  document.createElement = (function() {
+    var cached_function = document.createElement;
+    return function(list) {
+      if (arguments[0].toLowerCase() !== "script") {
+        return cached_function.apply(this, arguments);
+      }
+      var scriptElt = cached_function.apply(this, arguments);
+      var originalDescriptors = {
+        src: Object.getOwnPropertyDescriptor(
+          HTMLScriptElement.prototype,
+          "src"
+        ),
+        type: Object.getOwnPropertyDescriptor(
+          HTMLScriptElement.prototype,
+          "type"
+        )
+      };
+      Object.defineProperties(scriptElt, {
+        src: {
+          set(value) {
+            // If we set the source to a blacklisted url, we enforce the right type.
+            if (isInBlacklist(value)) {
+              scriptElt.type = "javascript/blocked";
+            }
+            return originalDescriptors.src.set.call(this, value);
+          },
+          get() {
+            return originalDescriptors.src.get.call(this);
+          }
+        },
+        type: {
+          set(value) {
+            return originalDescriptors.type.set.call(
+              this,
+              isInBlacklist(scriptElt.src) ? "javascript/blocked" : value
+            );
+          },
+          get() {
+            return originalDescriptors.type.get.call(this);
+          }
+        }
+      });
+      scriptElt.setAttribute = function(name, value) {
+        if (name === "type" || name === "src") {
+          scriptElt[name] = value;
+        } else {
+          HTMLScriptElement.prototype.setAttribute.call(scriptElt, name, value);
+        }
+      };
+      return scriptElt;
+    };
+  })();
+
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1 && node.tagName === "SCRIPT") {
+          var src = node.src || "";
+          if (isInBlacklist(src)) {
+            node.type = "javascript/blocked";
+          }
+        }
+      });
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+
+  function isInBlacklist(src) {
+    if (
+      list.includes(src) ||
+      list.filter(function(str) {
+        return src.includes(str);
+      }).length > 0
+    ) {
+      return true;
+    }
+    return false;
+  }
+}
+
 export {
   formatMoney,
   toggleCheckout,
@@ -207,5 +333,9 @@ export {
   quantityInputValuesInAgreementWithCartObject,
   toggleFocusInFocusOutEventListenersOfElement,
   addCSS,
-  addJS
+  addJS,
+  boldFixCart,
+  boldFixItem,
+  boldEmitCartLoaded,
+  boldBlockScripts
 };

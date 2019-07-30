@@ -23,7 +23,11 @@ import {
   quantityInputValuesInAgreementWithCartObject,
   toggleFocusInFocusOutEventListenersOfElement,
   addCSS,
-  addJS
+  addJS,
+  boldFixCart,
+  boldFixItem,
+  boldEmitCartLoaded,
+  boldBlockScripts
 } from "./Helpers/ShopifyGeneralHelpers";
 import {
   find,
@@ -154,6 +158,10 @@ X = Object.assign(X, {
   sendRequestsInParallel,
   sendRequestsInSeries,
   formatMoney,
+  boldFixCart,
+  boldFixItem,
+  boldEmitCartLoaded,
+  boldBlockScripts,
   api: ShopifyAPI,
   po: ProductOptions,
   qb: QuantityBreaks,

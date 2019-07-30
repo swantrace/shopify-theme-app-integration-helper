@@ -3,6 +3,7 @@ import axios from "axios";
 import { range, isValidATCForm } from "../Helpers/ShopifyGeneralHelpers";
 import { empty, remove, removeClass } from "../Helpers/DomHelpers";
 import { createFragmentFromString } from "../Helpers/Utilities";
+import { onNodeAdded } from "../DOMObserver";
 
 export default {
   getOptionsByProductId(productId, shopifyURL) {
@@ -15,6 +16,66 @@ export default {
         ({ data }) =>
           (data.option_product && data.option_product.option_sets) || []
       );
+  },
+  hasOption(productId, shopifyURL) {
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      self
+        .getOptionsByProductId(productId, shopifyURL)
+        .then(option_sets => {
+          if (option_sets.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        })
+        .catch(reject);
+    });
+  },
+  quickATCButtonToLink(
+    shopifyURL,
+    itemGridSelector,
+    addToCartButtonSelector,
+    buttonText,
+    buttonTextElementSelector
+  ) {
+    const self = this;
+    document.addEventListener(
+      "click",
+      function(event) {
+        let target = event.target;
+        if (target.closest("[data-x-should-redirect][data-x-redirect-url]")) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          event.stopPropagation();
+          let url = target.closest(
+            "[data-x-should-redirect][data-x-redirect-url]"
+          ).dataset.xRedirectUrl;
+          location.href = url;
+        }
+      },
+      true
+    );
+    onNodeAdded(document.documentElement, addToCartButtonSelector, buttons => {
+      buttons.forEach(button => {
+        const itemGrid = button.closest(itemGridSelector);
+        const productUrl = itemGrid.dataset.productUrl;
+        const productId = itemGrid.dataset.productId;
+        let buttonTextElement;
+        if (!buttonTextElementSelector) {
+          buttonTextElement = button;
+        } else {
+          buttonTextElement = button.querySelector(buttonTextElementSelector);
+        }
+        self.hasOption(productId, shopifyURL).then(function(productHasOptions) {
+          if (productHasOptions) {
+            buttonTextElement.firstChild.textContent = buttonText;
+            button.dataset.xRedirectUrl = productUrl;
+            button.dataset.xShouldRedirect = true;
+          }
+        });
+      });
+    });
   },
   removeClonedButtonAndResumeOriginalButton(
     form,
