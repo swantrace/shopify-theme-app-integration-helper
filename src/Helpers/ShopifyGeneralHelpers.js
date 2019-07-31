@@ -185,7 +185,9 @@ function isValidATCForm(form) {
     return false;
   }
 
-  const submitButton = form.querySelector("[type='submit'][name='add']");
+  const submitButton = form.querySelector(
+    "[type='submit'][name='add'],[type='button'][name='add']"
+  );
   if (submitButton === null) {
     console.log("the form doesn't have a submit button");
     return false;
@@ -228,14 +230,18 @@ function boldFixItem(item) {
   return item;
 }
 
-function boldEmitCartLoaded() {
+function boldEmitCartLoaded(cart) {
   if (
     window.BOLD &&
     window.BOLD.common &&
     window.BOLD.common.eventEmitter &&
     typeof window.BOLD.common.eventEmitter.emit === "function"
   ) {
-    window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded");
+    if (cart) {
+      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded", cart);
+    } else {
+      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded");
+    }
   }
 }
 
@@ -324,6 +330,35 @@ function boldBlockScripts(list) {
   }
 }
 
+function boldEmitVariantChanged(variant) {
+  if (variant && variant.id && variant.price) {
+    if (
+      window.BOLD &&
+      window.BOLD.common &&
+      window.BOLD.common.eventEmitter &&
+      typeof window.BOLD.common.eventEmitter.emit === "function"
+    ) {
+      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_variant_changed", {
+        variant: variant
+      });
+    }
+  } else {
+    new Error("You have to pass a valid variant object");
+  }
+}
+
+function affirmUpdatePrice() {
+  if (
+    window.affirm &&
+    window.affirm.ui &&
+    typeof window.affirm.ui.refresh === "function"
+  ) {
+    window.affirm.ui.refresh();
+  } else {
+    console.log("There is no affirm.ui.refresh function");
+  }
+}
+
 export {
   formatMoney,
   toggleCheckout,
@@ -337,5 +372,7 @@ export {
   boldFixCart,
   boldFixItem,
   boldEmitCartLoaded,
-  boldBlockScripts
+  boldBlockScripts,
+  boldEmitVariantChanged,
+  affirmUpdatePrice
 };

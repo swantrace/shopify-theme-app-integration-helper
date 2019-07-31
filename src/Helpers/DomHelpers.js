@@ -180,8 +180,28 @@ function wrapAllChildrenWith(elem, selector, wrappingElement) {
     parent.appendChild(wrappingElement);
   }
 }
-function unwrapEachChild(elem, selector) {}
-function replaceWith(elem, selector, newEl) {}
+function unwrapEachChild(elem, selector) {
+  var elms = find(selector, elem);
+  elms.forEach(el => {
+    let elParentNode = el.parentNode;
+    if (elParentNode !== document.body) {
+      elParentNode.parentNode.insertBefore(el, elParentNode);
+      elParentNode.parentNode.removeChild(elParentNode);
+    }
+  });
+  return elem;
+}
+function replaceWith(elem, selector, newEl) {
+  var elms = find(selector, elem);
+  elms.forEach(el => {
+    if (typeof newEl === "string") {
+      newEl = createFragmentFromString(newEl);
+    }
+    el.parentNode.insertBefore(newEl, el);
+    el.parentNode.removeChild(el);
+  });
+  return elem;
+}
 function show(elem) {}
 function hide(elem) {}
 function toggle(elem) {}

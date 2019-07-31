@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import axios from "axios";
-import { range, isValidATCForm } from "../Helpers/ShopifyGeneralHelpers";
+import {
+  range,
+  isValidATCForm,
+  affirmUpdatePrice
+} from "../Helpers/ShopifyGeneralHelpers";
 import { empty, remove, removeClass } from "../Helpers/DomHelpers";
 import { createFragmentFromString } from "../Helpers/Utilities";
 import { onNodeAdded } from "../DOMObserver";
@@ -167,6 +171,106 @@ export default {
       typeof window.BOLD.options.app.boot == "function"
     ) {
       window.BOLD.options.app.boot();
+    }
+  },
+  updateAffirmPriceOnPOTotalChanged(
+    atcForm,
+    productJSON,
+    affirmWidgetATCFormCommonParentSelector,
+    affirmWidgetSelector = ".affirm-as-low-as",
+    affirmDataAmountAttributeName = "data-amount"
+  ) {
+    if (!atcForm || !isValidATCForm(atcForm)) {
+      console.error("please pass a valid atc form");
+      return;
+    }
+    if (!productJSON) {
+      console.error("please pass the product object");
+      return;
+    }
+
+    const affirmWidget = atcForm
+      .closest(affirmWidgetATCFormCommonParentSelector)
+      .querySelector(affirmWidgetSelector);
+
+    if (!affirmWidget) {
+      console.lerror("cannot find the affirm widget");
+      return;
+    }
+    var currentOptionTotal = 0;
+    var currentVariantPrice = 0;
+
+    var currentVariantId = atcForm.id.value;
+    var currentVariant = productJSON.variants.find(
+      ({ id }) => id == currentVariantId
+    );
+    if (currentVariant) {
+      currentVariantPrice = currentVariant.price;
+    }
+
+    var boldVariantPricesInput = atcForm.querySelector(
+      ".bold_option_total [name='properties[_boldVariantPrices]']"
+    );
+
+    if (boldVariantPricesInput) {
+      currentOptionTotal = boldVariantPricesInput.value
+        .split(",")
+        .map(price => parseInt(price.replace(/\D/g, "")))
+        .reduce((a, b) => a + b, 0);
+    }
+
+    affirmWidget.setAttribute(
+      affirmDataAmountAttributeName,
+      currentVariantPrice + currentOptionTotal
+    );
+    affirmUpdatePrice();
+
+    if (
+      window.BOLD &&
+      window.BOLD.common &&
+      window.BOLD.common.eventEmitter &&
+      typeof window.BOLD.common.eventEmitter.on === "function"
+    ) {
+      window.BOLD.common.eventEmitter.on(
+        "BOLD_OPTIONS_total_changed",
+        function({ data }) {
+          const { option_product, total } = data;
+          const { form: currentForm, priceHandler } = option_product;
+          if (currentForm === atcForm) {
+            const { currentVariant } = priceHandler;
+            if (currentVariant) {
+              currentVariantPrice = currentVariant.price;
+            }
+            currentOptionTotal = total;
+
+            affirmWidget.setAttribute(
+              affirmDataAmountAttributeName,
+              currentVariantPrice + currentOptionTotal
+            );
+            affirmUpdatePrice();
+          }
+        }
+      );
+
+      window.BOLD.common.eventEmitter.on(
+        "BOLD_COMMON_variant_changed",
+        function(data) {
+          const { variant, selector } = data;
+          if (variant && selector) {
+            const { variantIdField } = selector;
+            if (variantIdField === atcForm.id) {
+              currentVariantPrice = variant.price;
+              affirmWidget.setAttribute(
+                affirmDataAmountAttributeName,
+                currentVariantPrice + currentOptionTotal
+              );
+              affirmUpdatePrice();
+            }
+          }
+        }
+      );
+    } else {
+      console.log("there is no window.BOLD.common.eventEmitter.on function");
     }
   }
 };

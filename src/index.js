@@ -1,18 +1,9 @@
 import XElement from "./XElement";
 import { bindData, define } from "./TinybindElement";
 import {
-  isHTML,
-  isCSSSelector,
-  isRegularExpression,
-  isAttributeMap,
-  isNode,
   range,
   sendRequestsInParallel,
-  sendRequestsInSeries,
-  throwIfMissing,
-  createFragmentFromString,
-  throttle,
-  merge
+  sendRequestsInSeries
 } from "./Helpers/Utilities";
 import {
   formatMoney,
@@ -27,7 +18,9 @@ import {
   boldFixCart,
   boldFixItem,
   boldEmitCartLoaded,
-  boldBlockScripts
+  boldBlockScripts,
+  boldEmitVariantChanged,
+  affirmUpdatePrice
 } from "./Helpers/ShopifyGeneralHelpers";
 import {
   find,
@@ -127,8 +120,31 @@ const addFunctionToXElement = function(fn, fnName) {
   [prevAll, "prevAll"],
   [nextAll, "nextAll"],
   [parents, "parents"],
+  [after, "after"],
+  [before, "before"],
+  [appendTo, "appendTo"],
+  [prependTo, "prependTo"],
+  [addClass, "addClass"],
+  [hasClass, "hasClass"],
+  [toggleClass, "toggleClass"],
+  [replaceClass, "replaceClass"],
   [wrapEachChildWith, "wrapEachChildWith"],
   [wrapAllChildrenWith, "wrapAllChildrenWith"],
+  [unwrapEachChild, "unwrapEachChild"],
+  [replaceWith, "replaceWith"],
+  [show, "show"],
+  [hide, "hide"],
+  [toggle, "toggle"],
+  [fadeIn, "fadeIn"],
+  [fadeOut, "fadeOut"],
+  [fadeToggle, "fadeToggle"],
+  [slideDown, "slideDown"],
+  [slideUp, "slideUp"],
+  [slideToggle, "slideToggle"],
+  [animate, "animate"],
+  [css, "css"],
+  [attr, "attr"],
+  [data, "data"],
   [dispatchCustomEvent, "dispatchCustomEvent"],
   [
     toggleFocusInFocusOutEventListenersOfElement,
@@ -155,6 +171,8 @@ X = Object.assign(X, {
   find,
   range,
   addCSS,
+  addJS,
+  isValidATCForm,
   sendRequestsInParallel,
   sendRequestsInSeries,
   formatMoney,
@@ -162,6 +180,8 @@ X = Object.assign(X, {
   boldFixItem,
   boldEmitCartLoaded,
   boldBlockScripts,
+  boldEmitVariantChanged,
+  affirmUpdatePrice,
   api: ShopifyAPI,
   po: ProductOptions,
   qb: QuantityBreaks,
