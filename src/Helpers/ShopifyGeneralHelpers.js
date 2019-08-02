@@ -207,8 +207,8 @@ function addCSS(text) {
 
 function addJS(text) {
   var head = document.getElementsByTagName("head")[0];
-  var s = document.createElement("style");
-  s.setAttribute("type", "text/css");
+  var s = document.createElement("script");
+  s.setAttribute("type", "text/javascript");
   s.appendChild(document.createTextNode(text));
   head.appendChild(s);
   return s;
@@ -262,7 +262,7 @@ function boldEmitCartLoaded(cart) {
 function boldBlockScripts(list) {
   document.createElement = (function() {
     var cached_function = document.createElement;
-    return function(list) {
+    return function() {
       if (arguments[0].toLowerCase() !== "script") {
         return cached_function.apply(this, arguments);
       }
