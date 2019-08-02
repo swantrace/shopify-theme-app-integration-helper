@@ -196,9 +196,23 @@ function isValidATCForm(form) {
   return true;
 }
 
-function addCSS(text) {}
+function addCSS(text) {
+  var head = document.getElementsByTagName("head")[0];
+  var s = document.createElement("style");
+  s.setAttribute("type", "text/css");
+  s.appendChild(document.createTextNode(text));
+  head.appendChild(s);
+  return s;
+}
 
-function addJS(text) {}
+function addJS(text) {
+  var head = document.getElementsByTagName("head")[0];
+  var s = document.createElement("style");
+  s.setAttribute("type", "text/css");
+  s.appendChild(document.createTextNode(text));
+  head.appendChild(s);
+  return s;
+}
 
 function boldFixCart(cart) {
   if (cart && cart.token) {
