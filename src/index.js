@@ -1,3 +1,5 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import XElement from "./XElement";
 import { bindData, define } from "./TinybindElement";
 import {

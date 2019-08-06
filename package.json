@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel watch \"./src/index.js\" --global X",
-    "build": "parcel build \"./src/index.js\" --global X",
+    "build": "parcel build \"./src/index.js\" --global X --no-source-maps --target browser",
     "test": "jest --watch"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
     "@babel/preset-env": "^7.4.3",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "core-js": "^3.1.4",
     "lodash.isequal": "^4.5.0",
     "promise-map": "^1.2.0",
     "promise-map-series": "^0.2.3",
@@ -29,6 +30,7 @@
     "prettier": "^1.18.2"
   },
   "browserslist": [
-    "last 1 Chrome versions"
+    "last 2 version",
+    "not dead"
   ]
 }
