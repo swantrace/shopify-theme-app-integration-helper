@@ -272,5 +272,30 @@ export default {
     } else {
       console.log("there is no window.BOLD.common.eventEmitter.on function");
     }
+  },
+  showLoadingSignAsSoonAsClonedButtonIsClicked(
+    showLoadingSignFunc,
+    atcButtonSelector = "button.addtocart"
+  ) {
+    document.addEventListener(
+      "click",
+      function(e) {
+        var target = e.target;
+        if (target.closest(`${atcButtonSelector}.bold_clone`)) {
+          if (
+            window.BOLD &&
+            window.BOLD.common &&
+            window.BOLD.common.eventEmitter &&
+            typeof window.BOLD.common.eventEmitter.on === "function"
+          ) {
+            window.BOLD.common.eventEmitter.once(
+              "BOLD_OPTIONS_validation_passed",
+              showLoadingSignFunc
+            );
+          }
+        }
+      },
+      true
+    );
   }
 };
