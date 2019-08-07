@@ -290,7 +290,10 @@ export default {
           ) {
             window.BOLD.common.eventEmitter.once(
               "BOLD_OPTIONS_validation_passed",
-              showLoadingSignFunc
+              function(result) {
+                var option_product = result.data.option_product;
+                showLoadingSignFunc(option_product);
+              }
             );
           }
         }
