@@ -2970,6 +2970,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash.camelcase@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
+  integrity sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
+
 lodash.isequal@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
@@ -3328,6 +3333,11 @@ object-keys@^1.0.11, object-keys@^1.0.12:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.1.1.tgz#1c47f272df277f3b1daf061677d9c82e2322c60e"
   integrity sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==
+
+object-observer@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/object-observer/-/object-observer-2.2.0.tgz#0b759040a2a6618188517590f981cc3b43b662be"
+  integrity sha512-tcLI3qEWMGS5/we2DvF+Eu2WWdgPla3KtMFqd5DwjSKnDclK3O0fm1aWYuZHHutQzqyCHBihYfPK7FaO2UTBHg==
 
 object-visit@^1.0.0:
   version "1.0.1"

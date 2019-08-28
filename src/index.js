@@ -2,6 +2,8 @@ import "core-js/stable";
 import "regenerator-runtime/runtime";
 import XElement from "./XElement";
 import { bindData, define } from "./TinybindElement";
+import { Observable } from "../node_modules/object-observer/dist/object-observer";
+
 import {
   range,
   sendRequestsInParallel,
@@ -21,6 +23,7 @@ import {
   boldFixItem,
   boldEmitCartLoaded,
   boldBlockScripts,
+  onScriptsLoaded,
   boldEmitVariantChanged,
   affirmUpdatePrice
 } from "./Helpers/ShopifyGeneralHelpers";
@@ -169,6 +172,7 @@ let X = (function() {
 })();
 
 X = Object.assign(X, {
+  enObservable: Observable.from,
   define,
   find,
   range,
@@ -182,6 +186,7 @@ X = Object.assign(X, {
   boldFixItem,
   boldEmitCartLoaded,
   boldBlockScripts,
+  onScriptsLoaded,
   boldEmitVariantChanged,
   affirmUpdatePrice,
   api: ShopifyAPI,

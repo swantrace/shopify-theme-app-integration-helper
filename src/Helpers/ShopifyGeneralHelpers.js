@@ -373,6 +373,38 @@ function affirmUpdatePrice() {
   }
 }
 
+function onScriptsLoaded(list, cb) {
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1 && node.tagName === "SCRIPT") {
+          var src = node.src || "";
+          if (isInConcernedlist(src)) {
+            node.onload = cb;
+          }
+        }
+      });
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+
+  function isInConcernedlist(src) {
+    if (
+      list.includes(src) ||
+      list.filter(function(str) {
+        return src.includes(str);
+      }).length > 0
+    ) {
+      return true;
+    }
+    return false;
+  }
+}
+
 export {
   formatMoney,
   toggleCheckout,
@@ -388,5 +420,6 @@ export {
   boldEmitCartLoaded,
   boldBlockScripts,
   boldEmitVariantChanged,
+  onScriptsLoaded,
   affirmUpdatePrice
 };

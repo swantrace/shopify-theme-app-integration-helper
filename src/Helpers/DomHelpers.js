@@ -1,5 +1,6 @@
 import Sizzle from "sizzle";
 import { isNode, createFragmentFromString } from "./Utilities";
+import camelCase from "lodash.camelcase";
 
 function find(elem, selector) {
   return Sizzle(selector, elem);
@@ -202,20 +203,153 @@ function replaceWith(elem, selector, newEl) {
   });
   return elem;
 }
-function show(elem) {}
-function hide(elem) {}
-function toggle(elem) {}
-function fadeIn(elem, duration) {}
-function fadeOut(elem, duration) {}
-function fadeTo(elem, duration) {}
-function fadeToggle(elem, duration) {}
-function slideUp(elem) {}
-function slideDown(elem) {}
-function slideToggle(elem) {}
-function animate(elem) {}
-function css(elem) {}
-function attr(elem) {}
-function data(elem) {}
+function show(elem) {
+  if (window.getComputedStyle(elem).getPropertyValue("display") === "none") {
+    if (elem.getAttribute("data-x-original-display-value") === null) {
+      elem.style.setProperty("display", "block");
+    } else if (elem.getAttribute("data-x-original-display-value") !== "none") {
+      elem.style.setProperty(
+        "display",
+        elem.getAttribute("data-x-original-display-value")
+      );
+      elem.removeAttribute("data-x-original-display-value");
+    } else {
+      elem.removeAttribute("data-x-original-display-value");
+    }
+  }
+  return elem;
+}
+function hide(elem) {
+  if (window.getComputedStyle(elem).getPropertyValue("display") !== "none") {
+    elem.setAttribute(
+      "data-x-original-display-value",
+      window.getComputedStyle(elem).getPropertyValue("display")
+    );
+    elem.style.setProperty("display", "none");
+  }
+  return elem;
+}
+function toggle(elem) {
+  if (window.getComputedStyle(elem).getPropertyValue("display") !== "none") {
+    hide(elem);
+  } else {
+    show(elem);
+  }
+  return elem;
+}
+function fadeIn(elem, duration) {
+  elem.style.transition = `opacity ${duration / 1000}s`;
+  elem.style.opacity = "1";
+  return elem;
+}
+function fadeOut(elem, duration) {
+  elem.style.transition = `opacity ${duration / 1000}s`;
+  elem.style.opacity = "0";
+  return elem;
+}
+function fadeTo(elem, duration, targetOpacity) {
+  elem.style.transition = `opacity ${duration / 1000}s`;
+  elem.style.opacity = targetOpacity;
+  return elem;
+}
+function fadeToggle(elem, duration) {
+  elem.style.transition = `opacity ${duration / 1000}s`;
+  const { opacity } = elem.ownerDocument.defaultView.getComputedStyle(
+    elem,
+    null
+  );
+  if (opacity === "1") {
+    elem.style.opacity = "0";
+  } else {
+    elem.style.opacity = "1";
+  }
+}
+function slideUp(elem, duration, callback) {
+  elem.style.height = elem.offsetHeight + "px";
+  elem.style.transitionProperty = "height, margin, padding";
+  elem.style.transitionDuration = duration + "ms";
+  elem.offsetHeight;
+  elem.style.overflow = "hidden";
+  elem.style.height = 0;
+  elem.style.paddingTop = 0;
+  elem.style.paddingBottom = 0;
+  elem.style.marginTop = 0;
+  elem.style.marginBottom = 0;
+  window.setTimeout(function() {
+    elem.style.display = "none";
+    elem.style.removeProperty("height");
+    elem.style.removeProperty("padding-top");
+    elem.style.removeProperty("padding-bottom");
+    elem.style.removeProperty("margin-top");
+    elem.style.removeProperty("margin-bottom");
+    elem.style.removeProperty("overflow");
+    elem.style.removeProperty("transition-duration");
+    elem.style.removeProperty("transition-property");
+    "function" == typeof callback && callback(elem);
+  }, duration);
+}
+function slideDown(elem, duration, callback) {
+  elem.style.removeProperty("display");
+  var display = window.getComputedStyle(elem).display;
+  if (display === "none") {
+    display = "block";
+  }
+  elem.style.display = display;
+  var height = elem.offsetHeight;
+  elem.style.overflow = "hidden";
+  elem.style.height = 0;
+  elem.style.paddingTop = 0;
+  elem.style.paddingBottom = 0;
+  elem.style.marginTop = 0;
+  elem.style.marginBottom = 0;
+  elem.offsetHeight;
+  elem.style.transitionProperty = "height, margin, padding";
+  elem.style.transitionDuration = duration + "ms";
+  elem.style.height = height + "px";
+  elem.style.removeProperty("padding-top");
+  elem.style.removeProperty("padding-bottom");
+  elem.style.removeProperty("margin-top");
+  elem.style.removeProperty("margin-bottom");
+  window.setTimeout(function() {
+    elem.style.removeProperty("height");
+    elem.style.removeProperty("overflow");
+    elem.style.removeProperty("transition-duration");
+    elem.style.removeProperty("transition-property");
+    "function" == typeof callback && callback(elem);
+  }, duration);
+}
+function css(elem, stylePropertyName, stylePropertyValue) {
+  if (arguments.length === 2) {
+    const win = elem.ownerDocument.defaultView;
+    return win.getComputedStyle(elem, null)[stylePropertyName];
+  }
+  if (arguments.length === 3) {
+    elem.style.setProperty(stylePropertyName, stylePropertyValue);
+    const win = elem.ownerDocument.defaultView;
+    return win.getComputedStyle(elem, null)[stylePropertyName];
+  }
+}
+function attr(elem, propertyName, propertyValue) {
+  if (arguments.length === 2) {
+    return elem.getAttribute(propertyName);
+  }
+  if (arguments.length === 3) {
+    elem.setAttribute(propertyName, propertyValue);
+    return elem.getAttribute(propertyName);
+  }
+}
+function data(elem, dataAttributeName, dataAttributeValue) {
+  if (arguments.length === 2) {
+    const value = elem.getAttribute(`data-${dataAttributeName}`);
+    elem.dataset[camelCase(dataAttributeName)] = value;
+    return value;
+  }
+  if (arguments.length === 3) {
+    elem.setAttribute(`data-${dataAttributeName}`, dataAttributeValue);
+    elem.dataset[camelCase(dataAttributeName)] = dataAttributeValue;
+    return dataAttributeValue;
+  }
+}
 function dispatchCustomEvent(elem, eventName, detail) {
   var event = new CustomEvent(eventName, { detail: detail });
   elem.dispatchEvent(event);
@@ -251,11 +385,10 @@ export {
   toggle,
   fadeIn,
   fadeOut,
+  fadeTo,
   fadeToggle,
   slideDown,
   slideUp,
-  slideToggle,
-  animate,
   css,
   attr,
   data
