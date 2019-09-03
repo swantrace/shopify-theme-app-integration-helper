@@ -405,6 +405,24 @@ function onScriptsLoaded(list, cb) {
   }
 }
 
+function boldSetThemeCartCallback(fn) {
+  if (typeof fn === "function") {
+    window.BOLD = window.BOLD || {};
+    window.BOLD.common = window.BOLD.common || {};
+    window.BOLD.common.themeCartCallback = fn;
+  }
+}
+
+function boldResetEventQueues() {
+  window.BOLD = window.BOLD || {};
+  window.BOLD.common = window.BOLD.common || {};
+  window.BOLD.common.eventQueues = window.BOLD.common.eventQueues || [];
+  Object.keys(window.BOLD.common.eventQueues).forEach(function(eventKey) {
+    window.BOLD.common.eventQueues[eventKey].running = false;
+    window.BOLD.common.eventQueues[eventKey].position = -1;
+  });
+}
+
 export {
   formatMoney,
   toggleCheckout,
@@ -421,5 +439,7 @@ export {
   boldBlockScripts,
   boldEmitVariantChanged,
   onScriptsLoaded,
-  affirmUpdatePrice
+  affirmUpdatePrice,
+  boldSetThemeCartCallback,
+  boldResetEventQueues
 };

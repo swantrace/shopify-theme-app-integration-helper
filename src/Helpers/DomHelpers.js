@@ -2,15 +2,187 @@ import Sizzle from "sizzle";
 import { isNode, createFragmentFromString } from "./Utilities";
 import camelCase from "lodash.camelcase";
 
-function find(elem, selector) {
-  return Sizzle(selector, elem);
+// 1. Selector
+function find(elem, filter) {
+  let children = [];
+  if (typeof filter === "string") {
+    children = Sizzle(filter, elem);
+  }
+  if (typeof filter === "function") {
+    children = Array.from(elem.children).filter(filter);
+  }
+  return children;
 }
+function matches(elem, filter) {
+  if (typeof filter === "string") {
+    return Sizzle.matchesSelector(elem, filter);
+  }
+  if (typeof filter === "function") {
+    return filter(elem);
+  }
+  return false;
+}
+// 2. Tree Traversing
+function first(elem, filter) {
+  return { elem, filter };
+}
+function last(elem, filter) {
+  return { elem, filter };
+}
+function children(elem, filter) {
+  if (filter) {
+    return find(elem, filter);
+  } else {
+    return elem.children;
+  }
+}
+function siblings(elem, filter) {
+  return Array.from(elem.parentNode.children).filter(function(child) {
+    return (
+      child !== elem &&
+      (!filter ||
+        (typeof filter === "string" && matches(child, filter)) ||
+        (typeof filter === "function" && filter(child)))
+    );
+  });
+}
+function prev(elem, filter) {
+  while ((elem = elem.previousElementSibling)) {
+    if (!filter || matches(elem, filter)) {
+      return elem;
+    }
+  }
+  return null;
+}
+function next(elem, filter) {
+  var nextElem = elem.parentNode.firstElementChild;
+  do {
+    if (nextElem === elem) {
+      continue;
+    }
+    if (nextElem === elem.nextElementSibling) {
+      if (!filter || matches(elem, filter)) {
+        return nextElem;
+      }
+    }
+  } while ((nextElem = nextElem.nextElementSibling));
+  return null;
+}
+function prevAll(elem, filter) {
+  let sibs = [];
+  while ((elem = elem.previousElementSibling)) {
+    if (!filter || matches(elem, filter)) {
+      sibs.push(elem);
+    }
+  }
+  return sibs;
+}
+function nextAll(elem, filter) {
+  var sibs = [];
+  var nextElem = elem.parentNode.firstElementChild;
+  do {
+    if (nextElem === elem) {
+      continue;
+    }
+    if (nextElem === elem.nextElementSibling) {
+      if (!filter || matches(elem, filter)) {
+        sibs.push(nextElem);
+        elem = nextElem;
+      }
+    }
+  } while ((nextElem = nextElem.nextSibling));
+  return sibs;
+}
+function parents(elem, filter) {
+  var parents = [];
+  var el = elem.parentElement;
+  while (el) {
+    if (!filter || matches(elem, filter)) {
+      parents.push(el);
+    }
+    el = el.parentElement;
+  }
+  return parents;
+}
+function parentsUntil(elem, filter) {
+  const result = [];
+  elem = elem.parentElement;
+  while (elem && !matches(elem, filter)) {
+    if (!filter) {
+      result.push(elem);
+    } else {
+      if (matches(elem, filter)) {
+        result.push(elem);
+      }
+    }
+    elem = elem.parentElement;
+  }
+  return result;
+}
+function parent(elem, filter) {
+  let el = elem.parentElement;
+  while (el) {
+    if (!filter || matches(elem, filter)) {
+      return el;
+    }
+    el = el.parentElement;
+  }
+  return el;
+}
+// 3. Manipulation
+// a. Class Attribute
+function removeClass(elem, ...classNames) {
+  elem.classList.remove(...classNames);
+  return elem;
+}
+function addClass(elem, ...classNames) {
+  elem.classList.add(...classNames);
+  return elem;
+}
+function hasClass(elem, className) {
+  return elem.classList.contains(className);
+}
+function toggleClass(elem, className) {
+  elem.classList.toggle(className);
+}
+function replaceClass(elem, oldClass, newClass) {
+  elem.classList.replace(oldClass, newClass);
+  return elem;
+}
+// b. DOM Removal
 function empty(elem) {
   while (elem.hasChildNodes()) {
     elem.removeChild(elem.lastChild);
   }
   return elem;
 }
+function remove(elem) {
+  return elem.parentNode.removeChild(elem);
+}
+function unwrapEachChild(elem, selector) {
+  var elms = find(selector, elem);
+  elms.forEach(el => {
+    let elParentNode = el.parentNode;
+    if (elParentNode !== document.body) {
+      elParentNode.parentNode.insertBefore(el, elParentNode);
+      elParentNode.parentNode.removeChild(elParentNode);
+    }
+  });
+  return elem;
+}
+// c. DOM Replacement
+function replaceWith(elem, selector, newEl) {
+  var elms = find(selector, elem);
+  elms.forEach(el => {
+    if (typeof newEl === "string") {
+      newEl = createFragmentFromString(newEl);
+    }
+    el.parentNode.insertBefore(newEl, el);
+    el.parentNode.removeChild(el);
+  });
+  return elem;
+}
+// d. DOM Insertion
 function after(elem, newEl) {
   if (elem.parentNode) {
     if (typeof newEl === "string") {
@@ -47,92 +219,19 @@ function prependTo(elem, target) {
   target.insertBefore(elem, target.firstChild);
   return elem.parentNode;
 }
-function remove(elem) {
-  return elem.parentNode.removeChild(elem);
-}
-function removeClass(elem, ...classNames) {
-  elem.classList.remove(...classNames);
+function append(elem, ...targets) {
+  elem.append(...targets);
   return elem;
 }
-function addClass(elem, ...classNames) {
-  elem.classList.add(...classNames);
+function prepend(elem, ...targets) {
+  elem.prepend(...targets);
   return elem;
 }
-function hasClass(elem, className) {
-  return elem.classList.contains(className);
+function insertBefore(elem, target) {
+  return { elem, target };
 }
-function toggleClass(elem, className) {
-  elem.classList.toggle(className);
-}
-function replaceClass(elem, oldClass, newClass) {
-  elem.classList.replace(oldClass, newClass);
-  return elem;
-}
-function matches(elem, selector) {
-  return Sizzle.matchesSelector(elem, selector);
-}
-function children(elem, selector) {
-  if (selector) {
-    return find(selector, elem);
-  } else {
-    return elem.children;
-  }
-}
-function siblings(elem, selector) {
-  return Array.from(elem.parentNode.children).filter(function(child) {
-    return child !== elem && (!selector || this.matches(child, selector));
-  });
-}
-function prevAll(elem, selector) {
-  let sibs = [];
-  while ((elem = elem.previousSibling)) {
-    if (elem.nodeType === 3) continue;
-    if (!selector || this.matches(elem, selector)) sibs.push(elem);
-  }
-  return sibs;
-}
-function nextAll(elem, selector) {
-  var sibs = [];
-  var nextElem = elem.parentNode.firstChild;
-  do {
-    if (nextElem.nodeType === 3) continue;
-    if (nextElem === elem) continue;
-    if (nextElem === elem.nextElementSibling) {
-      if (!selector || this.matches(nextElem, selector)) {
-        sibs.push(nextElem);
-        elem = nextElem;
-      }
-    }
-  } while ((nextElem = nextElem.nextSibling));
-  return sibs;
-}
-function parents(elem, selector) {
-  var parents = [];
-  var el = elem.parentElement;
-  while (el) {
-    if (selector) {
-      if (this.matches(el, selector)) {
-        parents.push(el);
-      }
-    } else {
-      parents.push(el);
-    }
-    el = el.parentElement;
-  }
-  return parents;
-}
-function removeAttributesExcept(elem, attributeNames = []) {
-  Array.from(elem.attributes)
-    .map(function(attribute) {
-      return attribute.nodeName;
-    })
-    .filter(function(attributeName) {
-      return !attributeNames.includes(attributeName);
-    })
-    .forEach(function(attributeName) {
-      this.removeAttribute(attributeName);
-    });
-  return elem;
+function insertAfter(elem, target) {
+  return { elem, target };
 }
 function wrapEachChildWith(elem, selector, wrappingElement) {
   var elms = find(selector, elem);
@@ -181,28 +280,68 @@ function wrapAllChildrenWith(elem, selector, wrappingElement) {
     parent.appendChild(wrappingElement);
   }
 }
-function unwrapEachChild(elem, selector) {
-  var elms = find(selector, elem);
-  elms.forEach(el => {
-    let elParentNode = el.parentNode;
-    if (elParentNode !== document.body) {
-      elParentNode.parentNode.insertBefore(el, elParentNode);
-      elParentNode.parentNode.removeChild(elParentNode);
-    }
+// 4. Attributes
+// todo: make css, attr and date function can accept one object
+function css(elem, stylePropertyName, stylePropertyValue) {
+  if (arguments.length === 2) {
+    const win = elem.ownerDocument.defaultView;
+    return win.getComputedStyle(elem, null)[stylePropertyName];
+  }
+  if (arguments.length === 3) {
+    elem.style.setProperty(stylePropertyName, stylePropertyValue);
+    const win = elem.ownerDocument.defaultView;
+    return win.getComputedStyle(elem, null)[stylePropertyName];
+  }
+}
+function attr(elem, propertyName, propertyValue) {
+  if (arguments.length === 2) {
+    return elem.getAttribute(propertyName);
+  }
+  if (arguments.length === 3) {
+    elem.setAttribute(propertyName, propertyValue);
+    return elem.getAttribute(propertyName);
+  }
+}
+function removeAttrExcept(elem, attributeNames = []) {
+  Array.from(elem.attributes)
+    .map(function(attribute) {
+      return attribute.nodeName;
+    })
+    .filter(function(attributeName) {
+      return !attributeNames.includes(attributeName);
+    })
+    .forEach(function(attributeName) {
+      elem.removeAttribute(attributeName);
+    });
+  return elem;
+}
+function removeAttr(elem, attributeNames = []) {
+  attributeNames.forEach(function(attributeName) {
+    elem.removeAttribute(attributeName);
   });
   return elem;
 }
-function replaceWith(elem, selector, newEl) {
-  var elms = find(selector, elem);
-  elms.forEach(el => {
-    if (typeof newEl === "string") {
-      newEl = createFragmentFromString(newEl);
-    }
-    el.parentNode.insertBefore(newEl, el);
-    el.parentNode.removeChild(el);
-  });
-  return elem;
+function data(elem, dataAttributeName, dataAttributeValue) {
+  if (arguments.length === 2) {
+    const value = elem.getAttribute(`data-${dataAttributeName}`);
+    elem.dataset[camelCase(dataAttributeName)] = value;
+    return value;
+  }
+  if (arguments.length === 3) {
+    elem.setAttribute(`data-${dataAttributeName}`, dataAttributeValue);
+    elem.dataset[camelCase(dataAttributeName)] = dataAttributeValue;
+    return dataAttributeValue;
+  }
 }
+// 5. Form
+// to do: finish fdObj and val function
+function fdObj() {
+  return null;
+}
+function val() {
+  return null;
+}
+// 6. Effect
 function show(elem) {
   if (window.getComputedStyle(elem).getPropertyValue("display") === "none") {
     if (elem.getAttribute("data-x-original-display-value") === null) {
@@ -318,41 +457,22 @@ function slideDown(elem, duration, callback) {
     "function" == typeof callback && callback(elem);
   }, duration);
 }
-function css(elem, stylePropertyName, stylePropertyValue) {
-  if (arguments.length === 2) {
-    const win = elem.ownerDocument.defaultView;
-    return win.getComputedStyle(elem, null)[stylePropertyName];
-  }
-  if (arguments.length === 3) {
-    elem.style.setProperty(stylePropertyName, stylePropertyValue);
-    const win = elem.ownerDocument.defaultView;
-    return win.getComputedStyle(elem, null)[stylePropertyName];
-  }
+function animate(elem) {
+  return elem;
 }
-function attr(elem, propertyName, propertyValue) {
-  if (arguments.length === 2) {
-    return elem.getAttribute(propertyName);
-  }
-  if (arguments.length === 3) {
-    elem.setAttribute(propertyName, propertyValue);
-    return elem.getAttribute(propertyName);
-  }
-}
-function data(elem, dataAttributeName, dataAttributeValue) {
-  if (arguments.length === 2) {
-    const value = elem.getAttribute(`data-${dataAttributeName}`);
-    elem.dataset[camelCase(dataAttributeName)] = value;
-    return value;
-  }
-  if (arguments.length === 3) {
-    elem.setAttribute(`data-${dataAttributeName}`, dataAttributeValue);
-    elem.dataset[camelCase(dataAttributeName)] = dataAttributeValue;
-    return dataAttributeValue;
-  }
-}
+// Event
 function dispatchCustomEvent(elem, eventName, detail) {
   var event = new CustomEvent(eventName, { detail: detail });
   elem.dispatchEvent(event);
+}
+// parseHTML
+function parseHTML(string) {
+  const context = document.implementation.createHTMLDocument();
+  const base = context.createElement("base");
+  base.href = document.location.href;
+  context.head.appendChild(base);
+  context.body.innerHTML = string;
+  return context.body.children;
 }
 
 export {
@@ -371,10 +491,23 @@ export {
   matches,
   children,
   siblings,
+  first,
+  last,
+  prev,
+  next,
   prevAll,
   nextAll,
   parents,
-  removeAttributesExcept,
+  parentsUntil,
+  parent,
+  removeAttr,
+  removeAttrExcept,
+  fdObj,
+  val,
+  append,
+  prepend,
+  insertBefore,
+  insertAfter,
   wrapEachChildWith,
   wrapAllChildrenWith,
   unwrapEachChild,
@@ -391,5 +524,7 @@ export {
   slideUp,
   css,
   attr,
-  data
+  data,
+  parseHTML,
+  animate
 };

@@ -1,0 +1,60 @@
+1. Dom manipulator should be able to work on NodeList and HTMLCollection
+2. To complete last item, we need have a function of each?
+3. We should have some function that can easily register custom event and trigger custom event
+4. check if an element is in view
+  a. https://github.com/richardgorman/DOM.js/blob/master/src/plugins/DOM.inView.js
+
+5. Object.observe implementation for debugging purpose, maybe we need to add common.js into project
+  a. https://github.com/dntzhang/oba (HTMLCollection, Node.childNodes are Live)
+  b. https://github.com/GianlucaGuarini/icaro
+  e. https://github.com/mmckegg/mutant
+
+6. .css should be able to accept a Object
+  a. https://github.com/npm-dom/dom-style
+
+7. event related functions like jQuery, features: multiple event,  on, off, once, trigger
+8. We also need html and text function
+  a. https://github.com/AmpersandJS/ampersand-dom
+
+9. Use Mutation Events to implement MutationObserver to debug;
+  a. https://github.com/webmodules/mutation-observer
+
+10. Debugging tool, help to find preventDefault, stopPropagation, stopImmediatePropagation
+  a. https://stackoverflow.com/questions/20490931/how-to-find-what-is-causing-a-preventdefault-which-overrides-normal-click-behavi
+
+11. ajax API like jQuery
+12. watcher of viewport:
+  a. https://github.com/camwiegert/in-view
+  b. https://github.com/stutrek/scrollMonitor
+
+13. Test:
+  a. https://github.com/testing-library/dom-testing-library
+  b. https://github.com/featurist/browser-monkey
+
+14. DomObserver related libraries:
+  a. https://github.com/muicss/sentineljs
+  b. https://github.com/uzairfarooq/arrive
+  c. https://github.com/rafaelw/mutation-summary
+  d. https://github.com/sindresorhus/element-ready
+  e. https://github.com/josh/selector-observer
+  f. https://github.com/ryanmorr/ready
+
+
+15. Shoud have a ready function to replace jQuery.ready
+16. resize detetctor:
+  a. https://github.com/wnr/element-resize-detector
+  b. https://github.com/developit/simple-element-resize-detector
+  c. https://github.com/hustcc/size-sensor
+
+17. Other DOM Manipulation library
+  a. https://github.com/vladocar/nanoJS
+  b. https://github.com/franciscop/umbrella
+  c. https://github.com/ded/bonzo
+  d. https://github.com/bevacqua/dominus
+  e. https://github.com/component/dom
+  f. https://framework7.io/docs/dom7.html
+  g. https://github.com/npm-dom/domquery
+  h. https://github.com/nzbin/domq
+
+
+

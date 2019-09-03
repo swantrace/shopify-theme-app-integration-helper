@@ -1,7 +1,7 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import XElement from "./XElement";
-import { bindData, define } from "./TinybindElement";
+import { html, define } from "./OmisElement";
 import { Observable } from "../node_modules/object-observer/dist/object-observer";
 
 import {
@@ -25,7 +25,9 @@ import {
   boldBlockScripts,
   onScriptsLoaded,
   boldEmitVariantChanged,
-  affirmUpdatePrice
+  affirmUpdatePrice,
+  boldSetThemeCartCallback,
+  boldResetEventQueues
 } from "./Helpers/ShopifyGeneralHelpers";
 import {
   find,
@@ -113,7 +115,6 @@ const addFunctionToXElement = function(fn, fnName) {
   [onNodeRemoved, "onNodeRemoved"],
   [onTextAdded, "onTextAdded"],
   [onTextRemoved, "onTextRemoved"],
-  [bindData, "bindData"],
   [find, "find"],
   [matches, "matches"],
   [empty, "empty"],
@@ -174,6 +175,7 @@ let X = (function() {
 X = Object.assign(X, {
   enObservable: Observable.from,
   define,
+  html,
   find,
   range,
   addCSS,
@@ -189,6 +191,8 @@ X = Object.assign(X, {
   onScriptsLoaded,
   boldEmitVariantChanged,
   affirmUpdatePrice,
+  boldSetThemeCartCallback,
+  boldResetEventQueues,
   api: ShopifyAPI,
   po: ProductOptions,
   qb: QuantityBreaks,
