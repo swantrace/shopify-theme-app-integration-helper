@@ -4,7 +4,7 @@
 
 In MS team sometimes we need to write custom js code to fix issues or integrate our apps with different themes and apps. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again.
 
-####It is composed of differnt parts:
+###It is composed of differnt parts:
 
 1. DOM Traversing and manipulation helper functions
 2. Event Handling helper functions
@@ -37,7 +37,8 @@ X.api.addItemFromForm(form)
 ```
 
 API
-####DOM Traversing and manipulation helper functions
+
+### DOM Traversing and manipulation helper functions
 
 - X(HTMLElement).find
 - X(HTMLElement).empty
@@ -91,7 +92,9 @@ API
 - X(HTMLElement).parseHTML
 - X(HTMLElement).animate
 - X(HTMLElement).animate
-  ####Helper functions to watch changes to the DOM
+
+### Helper functions to watch changes to the DOM
+
 - X(HTMLElement).onceTextAdded
 - X(HTMLElement).onceAttributeAdded
 - X(HTMLElement).onceNodeAdded
@@ -107,9 +110,13 @@ API
 - X(HTMLElement).on
 - X(HTMLElement).off
 - X(HTMLElement).once
-  ####Custom Element Creation helper function
+
+### Custom Element Creation helper function
+
 - X.define
-  ####Shopify Ajax API helper functions
+
+### Shopify Ajax API helper functions
+
 - X.api.getCart
 - X.api.getProduct
 - X.api.clearCart
@@ -120,24 +127,26 @@ API
 - X.api.removeItemByLine
 - X.api.addItem
 - X.api.addItemFromForm
-  ####general shopify helper functions
 
-* X.formatMoney
-* X.toggleCheckout
-* X.isValidATCForm
-* X.hideCheckoutButtons
-* X.showCheckoutButtonsHiddenByUs
-* X.quantityInputValuesInAgreementWithCartObject
-* X.toggleFocusInFocusOutEventListenersOfElement
-* X.addCSS
-* X.addJS
-* X.boldFixCart
-* X.boldFixItem
-* X.boldEmitCartLoaded
-* X.boldBlockScripts
-* X.boldEmitVariantChanged
-* X.onScriptsLoaded
-* X.affirmUpdatePrice
-* X.boldSetThemeCartCallback
-* X.boldResetEventQueues
-  ###helper functions for bold apps:
+### general shopify helper functions
+
+- X.formatMoney
+- X.toggleCheckout
+- X.isValidATCForm
+- X.hideCheckoutButtons
+- X.showCheckoutButtonsHiddenByUs
+- X.quantityInputValuesInAgreementWithCartObject
+- X.toggleFocusInFocusOutEventListenersOfElement
+- X.addCSS
+- X.addJS
+- X.boldFixCart
+- X.boldFixItem
+- X.boldEmitCartLoaded
+- X.boldBlockScripts
+- X.boldEmitVariantChanged
+- X.onScriptsLoaded
+- X.affirmUpdatePrice
+- X.boldSetThemeCartCallback
+- X.boldResetEventQueues
+
+### helper functions for bold apps:
