@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import isEqual from "lodash.isequal";
+import elementResizeDetectorMaker from "element-resize-detector";
+import { onNodeAdded } from "../DOMObserver/index";
 
 function formatMoney(money, format) {
   function n(t, e) {
@@ -423,6 +425,19 @@ function boldResetEventQueues() {
   });
 }
 
+function onATCFormResize(cb, filter) {
+  const erd = elementResizeDetectorMaker();
+  onNodeAdded(document.documentElement, 'form[action="/cart/add"]', forms => {
+    forms.forEach(form => {
+      erd.listenTo(form, form => {
+        if (!filter || filter(form)) {
+          cb(form);
+        }
+      });
+    });
+  });
+}
+
 export {
   formatMoney,
   toggleCheckout,
@@ -441,5 +456,6 @@ export {
   onScriptsLoaded,
   affirmUpdatePrice,
   boldSetThemeCartCallback,
-  boldResetEventQueues
+  boldResetEventQueues,
+  onATCFormResize
 };

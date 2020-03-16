@@ -3,11 +3,14 @@ import "regenerator-runtime/runtime";
 import XElement from "./XElement";
 import { html, define } from "./OmisElement";
 import { Observable } from "../node_modules/object-observer/dist/object-observer";
+import observe from "obajs";
+import axios from "axios";
 
 import {
   range,
   sendRequestsInParallel,
-  sendRequestsInSeries
+  sendRequestsInSeries,
+  createFragmentFromString
 } from "./Helpers/Utilities";
 import {
   formatMoney,
@@ -66,7 +69,8 @@ import {
   animate,
   css,
   attr,
-  data
+  data,
+  parseHTML
 } from "./Helpers/DomHelpers";
 import {
   onceAttributeAdded,
@@ -173,6 +177,8 @@ let X = (function() {
 })();
 
 X = Object.assign(X, {
+  observe,
+  axios,
   enObservable: Observable.from,
   define,
   html,
@@ -209,7 +215,9 @@ X = Object.assign(X, {
   hideCheckoutButtons,
   showCheckoutButtonsHiddenByUs,
   quantityInputValuesInAgreementWithCartObject,
-  toggleCheckout
+  toggleCheckout,
+  createFragmentFromString,
+  parseHTML
 });
 
 module.exports = X;
