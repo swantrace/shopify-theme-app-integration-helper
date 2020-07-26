@@ -1,10 +1,10 @@
-# xJS - Helper Functions For MS
+# xJS - Helper Functions For Shopify theme
 
 <img width="48" height="48" src="http://www.shejiye.com/uploadfile/icon/2017/0203/shejiyeiconbhkcxbhtwmg.png"/>
 
 In MS team sometimes we need to write custom js code to fix issues or integrate our apps with different themes and apps. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again.
 
-###It is composed of differnt parts:
+### It is composed of differnt parts:
 
 1. DOM Traversing and manipulation helper functions
 2. Event Handling helper functions
@@ -139,14 +139,7 @@ API
 - X.toggleFocusInFocusOutEventListenersOfElement
 - X.addCSS
 - X.addJS
-- X.boldFixCart
-- X.boldFixItem
-- X.boldEmitCartLoaded
-- X.boldBlockScripts
-- X.boldEmitVariantChanged
 - X.onScriptsLoaded
 - X.affirmUpdatePrice
-- X.boldSetThemeCartCallback
-- X.boldResetEventQueues
 
 ### helper functions for bold apps:
