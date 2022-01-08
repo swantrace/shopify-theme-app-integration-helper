@@ -1,8 +1,6 @@
 # xJS - shopify app and theme integration helpers
 
-<img width="48" height="48" src="http://www.shejiye.com/uploadfile/icon/2017/0203/shejiyeiconbhkcxbhtwmg.png"/>
-
-When we need to write custom js code to fix issues or integrate Shopify apps and theme. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again or import jQuery.
+> When we need to write custom js code to fix issues or integrate Shopify apps and theme. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again or import jQuery.
 
 ### It is composed of differnt parts:
 
