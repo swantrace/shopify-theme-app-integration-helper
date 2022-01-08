@@ -1,6 +1,6 @@
 # xJS - shopify app and theme integration helpers
 
-> The library's goal is to solve shopify app and theme integration issue without using jQuery.
+> The library's goal is to solve shopify app and theme integration issues without using jQuery.
 
 ### It is composed of differnt parts:
 
