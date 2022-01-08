@@ -22,15 +22,9 @@ import {
   toggleFocusInFocusOutEventListenersOfElement,
   addCSS,
   addJS,
-  boldFixCart,
-  boldFixItem,
-  boldEmitCartLoaded,
-  boldBlockScripts,
+  blockScripts,
   onScriptsLoaded,
-  boldEmitVariantChanged,
   affirmUpdatePrice,
-  boldSetThemeCartCallback,
-  boldResetEventQueues
 } from "./Helpers/ShopifyGeneralHelpers";
 import {
   find,
@@ -87,18 +81,6 @@ import {
   onTextRemoved
 } from "./DOMObserver";
 import ShopifyAPI from "./ShopifyAPI";
-import ProductOptions from "./Bold/ProductOptions";
-import QuantityBreaks from "./Bold/QuantityBreaks";
-import CustomPricing from "./Bold/CustomPricing";
-import Memberships from "./Bold/Memberships";
-import Multicurrency from "./Bold/Multicurrency";
-import ProductBuilder from "./Bold/ProductBuilder";
-import ProductBundles from "./Bold/ProductBundles";
-import ProductDiscount from "./Bold/ProductDiscount";
-import ProductUpsell from "./Bold/ProductUpsell";
-import RecurringOrders from "./Bold/RecurringOrders";
-import SalesMotivator from "./Bold/SalesMotivator";
-import StoreLocator from "./Bold/StoreLocator";
 
 const addFunctionToXElement = function(fn, fnName) {
   XElement.prototype[fnName] = function() {
@@ -190,28 +172,9 @@ X = Object.assign(X, {
   sendRequestsInParallel,
   sendRequestsInSeries,
   formatMoney,
-  boldFixCart,
-  boldFixItem,
-  boldEmitCartLoaded,
-  boldBlockScripts,
+  blockScripts,
   onScriptsLoaded,
-  boldEmitVariantChanged,
   affirmUpdatePrice,
-  boldSetThemeCartCallback,
-  boldResetEventQueues,
-  api: ShopifyAPI,
-  po: ProductOptions,
-  qb: QuantityBreaks,
-  csp: CustomPricing,
-  mem: Memberships,
-  mc: Multicurrency,
-  builder: ProductBuilder,
-  bundles: ProductBundles,
-  pd: ProductDiscount,
-  pu: ProductUpsell,
-  ro: RecurringOrders,
-  tm: SalesMotivator,
-  locator: StoreLocator,
   hideCheckoutButtons,
   showCheckoutButtonsHiddenByUs,
   quantityInputValuesInAgreementWithCartObject,

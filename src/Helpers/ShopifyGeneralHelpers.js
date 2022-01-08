@@ -23,7 +23,6 @@ function formatMoney(money, format) {
     o = /\{\{\s*(\w+)\s*\}\}/,
     a =
       format ||
-      window.BOLD.common.Shopify.shop.money_format ||
       window.Shopify.money_format ||
       "$ {% raw %}{{ amount }}{% endraw %}";
   switch (a.match(o)[1]) {
@@ -216,52 +215,7 @@ function addJS(text) {
   return s;
 }
 
-function boldFixCart(cart) {
-  if (cart && cart.token) {
-    if (
-      window.BOLD &&
-      window.BOLD.common &&
-      window.BOLD.common.cartDoctor &&
-      typeof window.BOLD.common.cartDoctor.fix === "function"
-    ) {
-      cart = window.BOLD.common.cartDoctor.fix(cart);
-    }
-    return cart;
-  }
-  return cart;
-}
-
-function boldFixItem(item) {
-  if (item && item.key) {
-    if (
-      window.BOLD &&
-      window.BOLD.common &&
-      window.BOLD.common.cartDoctor &&
-      typeof window.BOLD.common.cartDoctor.fixItem === "function"
-    ) {
-      item = window.BOLD.common.cartDoctor.fixItem(item);
-    }
-    return item;
-  }
-  return item;
-}
-
-function boldEmitCartLoaded(cart) {
-  if (
-    window.BOLD &&
-    window.BOLD.common &&
-    window.BOLD.common.eventEmitter &&
-    typeof window.BOLD.common.eventEmitter.emit === "function"
-  ) {
-    if (cart) {
-      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded", cart);
-    } else {
-      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_cart_loaded");
-    }
-  }
-}
-
-function boldBlockScripts(list) {
+function blockScripts(list) {
   document.createElement = (function() {
     var cached_function = document.createElement;
     return function() {
@@ -346,23 +300,6 @@ function boldBlockScripts(list) {
   }
 }
 
-function boldEmitVariantChanged(variant) {
-  if (variant && variant.id && variant.price) {
-    if (
-      window.BOLD &&
-      window.BOLD.common &&
-      window.BOLD.common.eventEmitter &&
-      typeof window.BOLD.common.eventEmitter.emit === "function"
-    ) {
-      window.BOLD.common.eventEmitter.emit("BOLD_COMMON_variant_changed", {
-        variant: variant
-      });
-    }
-  } else {
-    new Error("You have to pass a valid variant object");
-  }
-}
-
 function affirmUpdatePrice() {
   if (
     window.affirm &&
@@ -407,24 +344,6 @@ function onScriptsLoaded(list, cb) {
   }
 }
 
-function boldSetThemeCartCallback(fn) {
-  if (typeof fn === "function") {
-    window.BOLD = window.BOLD || {};
-    window.BOLD.common = window.BOLD.common || {};
-    window.BOLD.common.themeCartCallback = fn;
-  }
-}
-
-function boldResetEventQueues() {
-  window.BOLD = window.BOLD || {};
-  window.BOLD.common = window.BOLD.common || {};
-  window.BOLD.common.eventQueues = window.BOLD.common.eventQueues || [];
-  Object.keys(window.BOLD.common.eventQueues).forEach(function(eventKey) {
-    window.BOLD.common.eventQueues[eventKey].running = false;
-    window.BOLD.common.eventQueues[eventKey].position = -1;
-  });
-}
-
 function onATCFormResize(cb, filter) {
   const erd = elementResizeDetectorMaker();
   onNodeAdded(document.documentElement, 'form[action="/cart/add"]', forms => {
@@ -448,14 +367,8 @@ export {
   toggleFocusInFocusOutEventListenersOfElement,
   addCSS,
   addJS,
-  boldFixCart,
-  boldFixItem,
-  boldEmitCartLoaded,
-  boldBlockScripts,
-  boldEmitVariantChanged,
+  blockScripts,
   onScriptsLoaded,
   affirmUpdatePrice,
-  boldSetThemeCartCallback,
-  boldResetEventQueues,
   onATCFormResize
 };

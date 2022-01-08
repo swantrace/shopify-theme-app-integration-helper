@@ -1,8 +1,8 @@
-# xJS - Helper Functions For Shopify theme
+# xJS - shopify app and theme integration helpers
 
 <img width="48" height="48" src="http://www.shejiye.com/uploadfile/icon/2017/0203/shejiyeiconbhkcxbhtwmg.png"/>
 
-In MS team sometimes we need to write custom js code to fix issues or integrate our apps with different themes and apps. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again.
+When we need to write custom js code to fix issues or integrate Shopify apps and theme. The library's goal is to make every function that can be used for different tickets not necessary to be written manually again or import jQuery.
 
 ### It is composed of differnt parts:
 
@@ -16,7 +16,6 @@ In MS team sometimes we need to write custom js code to fix issues or integrate 
    1. find where a specific HTMLElement is changed.
    2. find where a specifi object is changed.
    3. find which stopPropagation or stopImmediatePropagation run
-8. Helper functions for Bold's apps
 
 Syntax demos:
 
@@ -141,5 +140,3 @@ API
 - X.addJS
 - X.onScriptsLoaded
 - X.affirmUpdatePrice
-
-### helper functions for bold apps:
